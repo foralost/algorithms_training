@@ -82,13 +82,18 @@ struct item* search_to_insert(struct item *node, int val) {
 	struct item *curr = node; // Start at top-left node
 
 	for (;;) {
-		while (curr->next && val >= curr->next->val)
+		while (curr->next && val >= curr->next->val){
+			printf("Going next: %d -> %d, LVL: %d \n", curr->val, curr->next->val, curr->assigned->height);
 			curr = curr->next;
+		}
 
-		if (curr->bottom)
+		if (curr->bottom){
+			printf("Going down: LVL %d -> %d\n", curr->assigned->height, curr->bottom->assigned->height);
 			curr = curr->bottom;
-		else
+		}
+		else{
 			return curr;
+		}
 	}
 
 	// DEADC0DE
@@ -130,8 +135,29 @@ struct item* search_to_insert_in_tower(struct item *node, int val) {
 	return NULL;
 }
 
-struct item* insert_node(struct skip_list *list, int val) {
+void print_list(struct skip_list* curr_list){
+	struct tower *curr_tower = curr_list->top_tower;
+		struct item *curr_item;
 
+		while ( 1 ) {
+			curr_item = curr_tower->items->next;
+			printf("Tower number %d \n ", curr_tower->height);
+			while (curr_item) {
+				printf(" %d ", curr_item->val);
+				curr_item = curr_item->next;
+			}
+			printf("\n");
+
+			if(curr_tower->items->bottom)
+				curr_tower = curr_tower->items->bottom->assigned;
+			else
+				break;
+		}
+
+}
+
+struct item* insert_node(struct skip_list *list, int val) {
+	printf("Inserting element: %d\n", val);
 	struct item *found = search_to_insert(list->top_tower->items, val); // it should be at level 0
 	struct item *added = append_node(found, val, NULL);
 
@@ -152,9 +178,13 @@ struct item* insert_node(struct skip_list *list, int val) {
 		added_prev = added_higher;
 		curr_tower = added_higher->assigned;
 	}
-
+	printf("\n");
+	print_list(list);
+	printf("\n");
 	return added_prev;
 }
+
+
 
 int main(void) {
 	srand(time(NULL));		// RANDOMIZATION
@@ -169,25 +199,8 @@ int main(void) {
 	insert_node(skip, 130);
 
 	// Print list
-	struct tower *curr_tower = skip->top_tower;
-	struct item *curr_item;
 
-	while ( 1 ) {
-		curr_item = curr_tower->items->next;
-		printf("Wieża o numerze %d \n ", curr_tower->height);
-		while (curr_item) {
-			printf(" %d ", curr_item->val);
-			curr_item = curr_item->next;
-		}
-		printf("\n");
-
-		if(curr_tower->items->bottom)
-			curr_tower = curr_tower->items->bottom->assigned;
-		else
-			break;
-	}
-
-	struct item* found_k = search_key(skip, 5);
+	struct item* found_k = search_key(skip, 25);
 
 	if(found_k)
 		printf("Found! %d Level %d", found_k->val, found_k->assigned->height);
