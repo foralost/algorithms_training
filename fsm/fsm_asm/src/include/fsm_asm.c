@@ -8,7 +8,7 @@
 #include<stddef.h>
 #include <stdlib.h>
 
-typedef enum STATES {
+enum STATES {
 	S_START,
 	S_SECTION,
 	S_SECTION_NAME,
@@ -148,8 +148,8 @@ struct token_result* fsm_parse_assembly(char *input, size_t size) {
 			} else if (c == '\n') {
 				curr_token->next = append_new_token(current_state, input,
 						&last_offset, &offset);
-				curr_token = curr_token->next;
 
+				curr_token = curr_token->next;
 				current_state = S_START;
 
 			} else if (!c) {
