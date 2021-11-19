@@ -187,20 +187,14 @@ struct item* insert_node(struct skip_list *list, int val) {
 
 
 int main(void) {
-	srand(time(NULL));		// RANDOMIZATION
+	srand( 0 );		// RANDOMIZATION
 	struct skip_list *skip = create_skip_list();
-	insert_node(skip, 50);
-	insert_node(skip, 30);
-	insert_node(skip, 25);
-	insert_node(skip, 10);
-	insert_node(skip, 100);
-	insert_node(skip, 75);
-	insert_node(skip, 120);
-	insert_node(skip, 130);
+	for(int i = 0 ; i < 1000; i++)
+	insert_node(skip, rand() % 4096);
 
 	// Print list
 
-	struct item* found_k = search_key(skip, 25);
+	struct item* found_k = search_key(skip, 103);
 
 	if(found_k)
 		printf("Found! %d Level %d", found_k->val, found_k->assigned->height);
