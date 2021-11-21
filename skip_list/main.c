@@ -76,7 +76,8 @@ struct skip_list* create_skip_list() {
 	return toRet;
 }
 
-
+//TODO: History of insertion in parameter
+//	to remove searching inside one tower
 struct item* search_to_insert(struct item *node, int val) {
 
 	struct item *curr = node; // Start at top-left node
@@ -119,7 +120,7 @@ struct item* search_key(struct skip_list* list, int val){
 	return NULL;
 }
 
-
+//TODO: Remove
 struct item* search_to_insert_in_tower(struct item *node, int val) {
 
 	struct item *curr = node; // Start at top-left node
@@ -165,12 +166,11 @@ struct item* insert_node(struct skip_list *list, int val) {
 	struct tower *curr_tower = added->assigned;
 
 	while (head_or_tail()) {
-
 		if (!curr_tower->prev) {
 			list->top_tower = create_tower(curr_tower->height + 1, curr_tower);
 			curr_tower->prev = list->top_tower;
 		}
-
+		// TODO: Use history from searching from insert, to append proper nodes
 		struct item *added_higher = append_node(
 				search_to_insert_in_tower(curr_tower->prev->items, val), val,
 				added_prev);
