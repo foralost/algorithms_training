@@ -252,38 +252,45 @@ void delete_node(struct item *to_del_after) {
 		to_del_after->next = NULL;
 }
 
-
-//TODO: Make deletion of a node, not value (allow duplicates).
-void delete_node_from_list_p(struct items* item,  struct item* to_del) {}
-
-
-void delete_node_from_list(struct skip_list *skip, int val) {
+void delete_node_from_list(struct skip_list *skip, struct item *node) {
 	struct item *curr = skip->top_tower->items;
 	struct item *curr_bottom = NULL;
 
-	for (;;) {
+	//FIXME: Goddamn name
+	struct item *curr_after = NULL;
 
-		while (curr->next && curr->next->val < val)
+	for (;;) {
+		while (curr->next && curr->next->val < node->val)
 			curr = curr->next;
 
-		if (curr->next && curr->next->val == val) {
-			delete_node(curr);
-			// Removing empty tower
-			if (curr == curr->assigned->items && !curr->next) {
-				curr_bottom = curr->bottom;
-				delete_tower(curr->assigned);
+		if (curr->next && curr->next->val == node->val) {
 
-				skip->top_tower = curr_bottom->assigned;
-				curr_bottom->assigned->prev = NULL;
+			if (curr->next == node) {
+
+				curr_bottom = curr->next->bottom;
+				curr_after = curr->bottom;
+
+				delete_node(curr);
+
+				if (curr == curr->assigned->items && !curr->next) {
+					if (curr->bottom)
+						skip->top_tower = curr->bottom->assigned;
+
+					delete_tower(curr->assigned);
+					skip->top_tower->prev = NULL;
+				}
 
 				if (curr_bottom) {
-					curr = curr_bottom;
+					node = curr_bottom;
+					curr = curr_after;
 					continue;
-				} else {
-					return;
 				}
-			}
 
+				return;
+			} else {
+				curr = curr->next;
+				continue;
+			}
 		}
 
 		if (curr->bottom)
@@ -298,9 +305,10 @@ int main(void) {
 	struct skip_list *skip = create_skip_list();
 
 	for (int i = 0; i < 60; i++)
-		insert_node(skip, rand() % 1024);
+		insert_node(skip, 10);
 
-	delete_node_from_list(skip, 153);
+	delete_node_from_list(skip, search_key(skip, 10));
+
 	print_list(skip);
 
 	struct item *found_k = search_key(skip, 923);
